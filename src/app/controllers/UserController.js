@@ -13,7 +13,7 @@ class UserController {
           message: "URL  không hợp lệ"
         })
       }
-     url = url.toLowerCase()
+     url = url.toLowerCase().trim()
      const browser = await puppeteer.launch({
        headless: true,
        args: [
