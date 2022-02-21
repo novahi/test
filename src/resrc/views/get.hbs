@@ -29,7 +29,9 @@
         headers: {
           "Content-Type": "application/json"
         },
-          url: $("#url").value.trim(),
+        body: JSON.stringify({
+          url: $("#url").value.trim()
+        })
         })
       .then(res => res.json())
       $("#message").textContent = data.message
