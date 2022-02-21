@@ -1,4 +1,4 @@
-<div id="form"  class="row mt-4 g-3 needs-validation" novalidate>
+<form id="form"  class="row mt-4 g-3 needs-validation" novalidate>
   <div class="col-md-4">
     <label for="validationCustom01" class="form-label">ID</label>
     <input type="text" class="form-control" id="url" name="url"  required>
@@ -10,7 +10,7 @@
     </div>
     <h2 id="messgae"></h2>
     <img id="img" />
-  </div>
+  </form>
 
 <div class="col-12">
   <button class="btn btn-primary" type="submit">Search</button>
@@ -22,8 +22,8 @@
 <script>
   const $ = document.querySelector.bind(document)
   $("#form").addEventListener("click", async (e) => {
-   // e.preventDefault()
-  //  e.stopPropagation()
+    e.preventDefault()
+    e.stopPropagation()
     const data = await fetch("/", {
         method: "POST",
         headers: {
@@ -32,6 +32,7 @@
           url: $("#url").value.trim(),
         })
       .then(res => res.json())
+      alert(data.message)
     if (data.status) {
       $("#message").textContent = data.title
     }

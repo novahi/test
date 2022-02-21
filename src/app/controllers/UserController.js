@@ -8,20 +8,28 @@ class UserController {
   post(req, res) {
     let { url } = req.body
     ;(async () => {
-      const browser = await puppeteer.launch({
-        args: [
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox',
-                          ]
-      })
-      const page = await browser.newPage()
-      await page.goto(url)
-      const title = await page.value(() => document.querySelector("title").textContent)
-      return res.status(200).json({
-        message: "success",
-        status: true,
-        title
-      })
+      try {
+        const browser = await puppeteer.launch({
+          args: [
+                            '--no-sandbox',
+                            '--disable-setuid-sandbox',
+                                  ]
+        })
+        const page = await browser.newPage()
+        await page.goto(url)
+        const title = await page.value(() => document.querySelector("title").textContent)
+        return res.status(200).json({
+          message: "success",
+          status: true,
+          title
+        })
+      } catch (e) {
+        console.log(e.message)
+        res.status(404).json({
+          message: e.message,
+          status: false
+        })
+      }
     })()
   }
 }
