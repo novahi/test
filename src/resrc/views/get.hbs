@@ -33,8 +33,7 @@
       })
       .then(res => res.json())
     if (data.status) {
-      $("#message").textContent = data.message 
-      $("#img").src = data.image
+      $("#message").textContent = data.title
     }
     
   })
