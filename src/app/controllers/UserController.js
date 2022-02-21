@@ -1,74 +1,40 @@
-const  User = require('../models/User')
+require("dotenv").config()
+const puppeteer = require("puppeteer-core")
+
 class UserController {
-  async show(req, res, next) {
-    try {
-      const data = await User.findOne({
-        slug: req.params.slug
-      }).lean()
-
-      return res.render('viewuser', {
-            data })
-      
-    } catch (e) {
-      next()
+  get (req, res) {
+    res.status(200).render("get")
+  }
+  post(req, res) {
+    const { url } = req.body
+    if(!url) { 
+      return res.status(404).json({
+      message: "Link does not exist or is incorrect",
+      status: false
+    }) 
     }
-  }
-  async create(req, res, next) {
-    return await res.render('create')
-  }
-  async view(req, res, next) {
-    try {
-      const data = await User.find({}).lean()
-      return res.render('user', {
-      data
+    if(url.includes("https://")) {
+      const findIdFb = async (link) => {
+       
+       const browser = await puppeteer.launch({
+         args: [
+             '--no-sandbox',
+             '--disable-setuid-sandbox',
+           ],
+       })
+       const page = await browser.newPage()
+       await page.goto(link)
+       const fb = await page.evaluate(() => window.location.href)
+       return fb.split("/")[2]
+      }
+      let id = findIdFb(url)
+      console.log(id)
+      res.status(201).json({
+        message: `ID: ${id}`,
+        status: true
       })
-    } catch (e) {
-      next()
     }
   }
-  async store(req, res, next) {
-    try {
-      const formData = await req.body
-      formData.image = `https://graph.facebook.com/${req.body.facebook.trim()}/picture?height=1000&width=1000&ftype=large&access_token=6628568379|c1e620fa708a1d5696fb991c1bde5662`
-      const newUser = await new User(formData)
-      const data = await newUser.save()
-      return  res.redirect('/users')
-
-      
-    } catch (e) {
-      next()
-    }
-  }
-  async edit(req, res, next) {
-    try {
-      const data = await User.findById(req.params.id).lean()
-      return res.render('edit', {
-          data
-        })
-    } catch (e) {
-      next()
-    }
-  }
-  async update(req, res, next) {
-    try {
-      const data = await User.updateOne({
-        _id: req.params.id
-      }, req.body)
-      return res.redirect('/users')
-    } catch (e) {
-      next()
-    }
-  }
-  async destroy(req, res, next) {
-    try {
-      const data = await User.deleteOne({
-        _id: req.params.id
-      })
-      return res.redirect('back')
-  } catch (e) {
-    next()
-  }
-}
 }
 
 module.exports = new UserController()
