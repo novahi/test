@@ -1,4 +1,4 @@
-<form  method="POST"  class="row g-3 needs-validation" novalidate>
+<form id="form" method="POST"  class="row g-3 needs-validation" novalidate>
   <div class="col-md-4">
     <label for="validationCustom01" class="form-label">ID</label>
     <input type="text" class="form-control" id="url" name="url"  required>
@@ -8,6 +8,7 @@
     <div class="invalid-feedback">
       vui lòng nhập trường này !
     </div>
+    <h1 id="message"></h1>
   </div>
 
 <div class="col-12">
@@ -49,7 +50,7 @@
       })
       .then(res => res.json())
     if (data.message) {
-      $("#res").textContent = data.message || "Server Error !"
+      $("#message").textContent = data.message || "Server Error !"
     }
     
   })
