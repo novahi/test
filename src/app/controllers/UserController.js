@@ -8,12 +8,12 @@ class UserController {
   async post(req, res) {
     try {
       let { url } = req.body
-      url = url.toLowerCase()
       if (!url) {
         return res.status(404).json({
           message: "URL  không hợp lệ"
         })
       }
+     url = url.toLowerCase()
      const browser = await puppeteer.launch({
        headless: true,
        args: [
@@ -23,7 +23,7 @@ class UserController {
      })
      const page = await browser.newPage()
      await page.goto(url)
-     const title = await page.evaluate(() => document.querySelector("title"))
+     const title = await page.evaluate(() => document.querySelector("title").textContent)
      res.status(200).json({
        message: title,
        status: true

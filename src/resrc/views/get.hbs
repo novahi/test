@@ -8,7 +8,7 @@
     <div class="invalid-feedback">
       vui lòng nhập trường này !
     </div>
-    <h2 id="messgae"></h2>
+    <h2 id="message"></h2>
     <img id="img" />
   </form>
 
@@ -32,10 +32,6 @@
           url: $("#url").value.trim(),
         })
       .then(res => res.json())
-      alert(data.message)
-    if (data.status) {
       $("#message").textContent = data.message
-    }
-    
   })
 </script>
