@@ -21,7 +21,7 @@
 
 <script>
   const $ = document.querySelector.bind(document)
-  $("#form").addEventListener("click", async (e) => {
+  $("#form").addEventListener("submit", async (e) => {
     e.preventDefault()
     e.stopPropagation()
     const data = await fetch("/", {
