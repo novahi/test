@@ -27,7 +27,7 @@ class UserController {
           const page = await browser.newPage()
           await page.goto(link)
           await page.screenshot({ 
-            path: __dirname + "image.png"
+            path: "app/src/public/image/" + "image.png"
           })
           
         } catch (e) {

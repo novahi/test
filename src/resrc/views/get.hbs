@@ -1,4 +1,4 @@
-<form id="form"  class="row g-3 needs-validation" novalidate>
+<div id="form"  class="row mt-4 g-3 needs-validation" novalidate>
   <div class="col-md-4">
     <label for="validationCustom01" class="form-label">ID</label>
     <input type="text" class="form-control" id="url" name="url"  required>
@@ -15,14 +15,14 @@
 <div class="col-12">
   <button class="btn btn-primary" type="submit">Search</button>
 </div>
-</form>
+</div>
 
 
 
 <script>
-  $("#form").addEventListener("submit", async (e) => {
-    e.preventDefault()
-    e.stopPropagation()
+  $("#form").addEventListener("click", async (e) => {
+   // e.preventDefault()
+  //  e.stopPropagation()
     const data = await fetch("/", {
         method: "POST",
         headers: {
