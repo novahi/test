@@ -1,5 +1,5 @@
 require("dotenv").config()
-const puppeteer = require("puppeteer-core")
+const puppeteer = require("puppeteer")
 
 class UserController {
   get (req, res) {
@@ -14,18 +14,25 @@ class UserController {
     }) 
     }
     if(url.includes("https://")) {
-      const findIdFb = async (link) => {
-       
-       const browser = await puppeteer.launch({
-         args: [
-             '--no-sandbox',
-             '--disable-setuid-sandbox',
-           ],
-       })
-       const page = await browser.newPage()
-       await page.goto(link)
-       const fb = await page.evaluate(() => window.location.href)
-       return fb.split("/")[2]
+      const findIdFb =  (link) => {
+        let data
+        const id = async (link) => {
+          try {
+            const browser = await puppeteer.launch({
+              args: [
+                         '--no-sandbox',
+                         '--disable-setuid-sandbox',
+                       ],
+            })
+            const page = await browser.newPage()
+            await page.goto(link)
+            const fb = await page.evaluate(() => window.location.href)
+            data = fb.split("/")[2]
+          } catch (e) {
+            console.log(e.message)
+          }
+        }
+        return data
       }
       let id = findIdFb(url)
       console.log(id)
