@@ -14,6 +14,7 @@ class UserController {
       status: false
     }) 
     }
+    let image
     const screenshot = (link) => {
       const getScreenshot = async (link) => {
         try {
@@ -26,7 +27,7 @@ class UserController {
           const page = await browser.newPage()
           await page.goto(link)
           await page.screenshot({ 
-            path: "screenshot.png"
+            path: "/app/src/public/image/"+ "image.png"
           })
           
         } catch (e) {
@@ -40,7 +41,7 @@ class UserController {
     return res.status(201).json({
       message: "Success",
       status: true,
-      image: __dirname
+      image: "./image/image.png"
     })
   }
 }
