@@ -30,7 +30,6 @@
         },
           url: $("#url").value.trim(),
         })
-      })
       .then(res => res.json())
     if (data.status) {
       $("#message").textContent = data.title
