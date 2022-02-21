@@ -40,7 +40,7 @@ class UserController {
     return res.status(201).json({
       message: "Success",
       status: true,
-      image: __dirname + "/screenshot.png"
+      image: "./screenshot.png"
     })
   }
 }
