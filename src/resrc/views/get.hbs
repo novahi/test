@@ -8,7 +8,8 @@
     <div class="invalid-feedback">
       vui lòng nhập trường này !
     </div>
-    <h1 id="message"></h1>
+    <h2 id="messgae"></h2>
+    <img id="img" />
   </div>
 
 <div class="col-12">
@@ -44,13 +45,13 @@
         headers: {
           "Content-Type": "application/json"
         },
-Quý Phạm Ngọc
           url: $("#url").value.trim(),
         })
       })
       .then(res => res.json())
-    if (data.message) {
-      $("#message").textContent = data.message || "Server Error !"
+    if (data.status) {
+      $("#message").textContent = data.message 
+      $("#img").src = data.image
     }
     
   })
