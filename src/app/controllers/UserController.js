@@ -7,43 +7,22 @@ class UserController {
   }
   post(req, res) {
     let { url } = req.body
-    url = url.toLowerCase()
-    if(!url) { 
-      return res.status(404).json({
-      message: "Link does not exist or is incorrect",
-      status: false
-    }) 
-    }
-    let image
-    const screenshot = (link) => {
-      const getScreenshot = async (link) => {
-        try {
-          const browser = await puppeteer.launch({
-            args: [
-              '--no-sandbox',
-              '--disable-setuid-sandbox',
-                    ]
-          })
-          const page = await browser.newPage()
-          await page.goto(link)
-          await page.screenshot({ 
-            path: "app/src/public/image/" + "image.png"
-          })
-          
-        } catch (e) {
-          console.log(e.message)
-        }
-      }
-      getScreenshot(link)
-    }
-    screenshot(url)
-    console.log(__dirname)
-    return res.status(201).json({
-      message: "Success",
-      status: true,
-      image: "image.png"
-    })
+    ;(async () => {
+      const browser = await puppeteer.launch({
+        args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                          ]
+      })
+      const page = await browser.newPage()
+      await page.goto(url)
+      const title = await page.value(() => document.querySelector("title").textContent)
+      return res.status(200).json({
+        message: "success",
+        status: true,
+        title
+      })
+    })()
   }
-}
 
 module.exports = new UserController()
