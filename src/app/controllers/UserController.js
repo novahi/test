@@ -1,39 +1,47 @@
 require("dotenv").config()
 const puppeteer = require("puppeteer")
-
 class UserController {
   get (req, res) {
-    res.status(200).render("get")
+    res.status(200).render("home")
   }
   async post(req, res) {
     try {
-      let { url } = req.body
-      if (!url) {
-        return res.status(404).json({
-          message: "URL  không hợp lệ"
-        })
-      }
-     url = url.toLowerCase().trim()
-     const browser = await puppeteer.launch({
-       headless: true,
-       args: [
-         '--no-sandbox',
-         '--disable-setuid-sandbox'
-         ]
-     })
-     const page = await browser.newPage()
-     await page.goto(url)
-     const title = await page.evaluate(() => document.querySelector("title").textContent)
-     res.status(200).json({
-       message: title,
-       status: true
-     })
-      
-    } catch (e) {
-      console.log(e.message)
+    let { url } = req.body
+    url = url.toLowerCase()
+    const browser = await puppeteer.launch({
+      args: [
+             '--no-sandbox',
+             '--disable-setuid-sandbox'
+             ]
+    })
+    const linkLogin = "https://www.instagram.com/accounts/login/"
+    const page = await browser.newPage()
+    await page.goto(linkLogin, {
+      waitUntil: 'networkidle0
+    })
+    await page.type("input[name='username']", process.env.USERNAME_IG);
+    await page.type("input[name='password']", process.env.PASSWORD_IG);
+    await page.click("button[type='submit']")
+    await page.waitForNavigation({
+      waitUntil: 'networkidle0',
+    });
+    await page.goto(url, { waitUntil: "networkidle0" })
+    let dir = __dirname.split("/")
+    dir = `${dir[2]}/public/image`
+    await page.screenshot({ path: `${dir}/image.png`})
+    console.log(dir)
+    await browser.close()
+    res.status(201).json({
+      message: "success",
+      status: true,
+    })
+    } 
+    catch (e) {
+      console.log("co loi")
+      console.log(e.messgase)
       res.status(404).json({
-        message: e.message,
-        status: false,
+        message: "co loi",
+        status: false
       })
     }
   }
