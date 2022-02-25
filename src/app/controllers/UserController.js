@@ -2,7 +2,7 @@ require("dotenv").config()
 const puppeteer = require("puppeteer")
 class UserController {
   get (req, res) {
-    res.status(200).render("home")
+    res.status(200).render("get")
   }
   async post(req, res) {
     try {
