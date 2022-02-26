@@ -1,5 +1,4 @@
 require("dotenv").config()
-const { is } = require("express/lib/request")
 const puppeteer = require("puppeteer")
 const linkLogin = "https://www.instagram.com/accounts/login/"
 class UserController {
