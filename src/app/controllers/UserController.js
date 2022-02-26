@@ -22,7 +22,7 @@ class UserController {
     })
     const isLogin = await  page.evaluate(() => window.location.href)
     if(isLogin.includes(linkLogin)) {
-      await Peomise.all([
+      await Promise.all([
          page.waitForSelector("input[name='username']"),
          page.waitForSelector("input[name='password']"),
          page.waitForSelector("button[type='submit']")
