@@ -1,5 +1,7 @@
 require("dotenv").config()
+const { is } = require("express/lib/request")
 const puppeteer = require("puppeteer")
+const linkLogin = "https://www.instagram.com/accounts/login/"
 class UserController {
   get (req, res) {
     res.status(200).render("get")
@@ -9,36 +11,46 @@ class UserController {
     let { url } = req.body
     url = url.toLowerCase()
     const browser = await puppeteer.launch({
+      headless: false,
       args: [
              '--no-sandbox',
              '--disable-setuid-sandbox'
              ]
     })
-    const linkLogin = "https://www.instagram.com/accounts/login/"
     const page = await browser.newPage()
-    await page.goto(linkLogin, {
-      waitUntil: 'networkidle0
+    await page.goto(url, {
+      waitUntil: 'networkidle0'
     })
-    await page.type("input[name='username']", process.env.USERNAME_IG);
-    await page.type("input[name='password']", process.env.PASSWORD_IG);
-    await page.click("button[type='submit']")
-    await page.waitForNavigation({
-      waitUntil: 'networkidle0',
-    });
+    const isLogin = await  page.evaluate(() => window.location.href)
+    if(isLogin.includes(linkLogin)) {
+      await page.waitForSelector("input[name='username']")
+      await page.type("input[name='username']", process.env.USERNAME_IG, { delay: 200});
+      await page.type("input[name='password']", process.env.PASSWORD_IG, { delay: 200 });
+      await Promise.all([page.click("button[type='submit']"), page.waitForNavigation({ waitUntil: "networkidle0"})])
+    }
     await page.goto(url, { waitUntil: "networkidle0" })
-    let dir = __dirname.split("/")
-    dir = `${dir[2]}/public/image`
-    await page.screenshot({ path: `${dir}/image.png`})
-    console.log(dir)
+    const image = await page.evaluate(() => {
+      let link = document.querySelectorAll("img[class='FFVAD']")
+      link = [...link]
+      link = link.map(x => {
+        let url = x.getAttribute("srcset")
+        url = url.split(",")
+        url = url[url.length -1]
+        url = url.split(" ")[0]
+        return url
+      })
+      return link
+    })
+    console.log(image)
     await browser.close()
     res.status(201).json({
-      message: "success",
+      message: image,
       status: true,
     })
     } 
     catch (e) {
       console.log("co loi")
-      console.log(e.messgase)
+      console.log(e.message)
       res.status(404).json({
         message: "co loi",
         status: false

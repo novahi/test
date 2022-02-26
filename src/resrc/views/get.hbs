@@ -1,29 +1,22 @@
-<form id="form"  class="row mt-4 g-3 needs-validation" novalidate>
-  <div class="col-md-4">
-    <label for="validationCustom01" class="form-label">URL INSTAGRAM</label>
-    <input type="text" class="form-control" id="url" name="url"  required>
-    <div class="valid-feedback">
-      tốt lắm !
-    </div>
-    <div class="invalid-feedback">
-      vui lòng nhập trường này !
-    </div>
-    <h2 id="message"></h2>
-    <img id="img" />
-  </form>
-
-<div class="col-12">
-  <button class="btn btn-primary" type="submit">Search</button>
-</div>
-</div>
+  <div class="content">
+    <form class="form">
+      <label for="url" class="form-label"><strong>Get Image Instagram</strong></label>
+      <input type="text" name="url" class="form-input" id="url" placeholder="Enter the link here!">
+      <button class="btn mb-4">search</button>
+    </form>
+  </div>
+  <div id="message" class="alert"></div>
+  <div class="image"></div>
 
 
 
 <script>
   const $ = document.querySelector.bind(document)
-  $("#form").addEventListener("submit", async (e) => {
+$(".form").addEventListener("submit", async (e) => {
+  try {
     e.preventDefault()
     e.stopPropagation()
+    $("#message").textContent = "Loading...!"
     const data = await fetch("/", {
         method: "POST",
         headers: {
@@ -32,8 +25,22 @@
         body: JSON.stringify({
           url: $("#url").value.trim()
         })
-        })
+      })
       .then(res => res.json())
-      $("#message").textContent = data.message
-  })
+    
+    let resultMessage = data.status ? "alert-success" : "alert-error"
+    $("#message").classList.add(resultMessage)
+    $("#message").textContent = data.message
+    data.image.forEach(x => {
+      let img = document.createElement("img")
+      img.className = "item"
+      img.src = x
+      $(".image").appendChild(img)
+    })
+  } catch (e) {
+    alert("Server Error !")
+    $("#message").classList.add("alert-error")
+    $("#message").textContent = "Server Error"
+  }
+})
 </script>
