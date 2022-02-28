@@ -38,7 +38,6 @@ $(".form").addEventListener("submit", async (e) => {
       $(".image").appendChild(img)
     })
   } catch (e) {
-    alert("Server Error !")
     $("#message").classList.add("alert-error")
     $("#message").textContent = "Server Error"
   }

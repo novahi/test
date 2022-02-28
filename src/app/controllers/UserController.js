@@ -1,5 +1,6 @@
 require("dotenv").config()
 const puppeteer = require("puppeteer")
+const download = require("image-downloader")
 const linkLogin = "https://www.instagram.com/accounts/login/"
 class UserController {
   get (req, res) {
@@ -11,10 +12,12 @@ class UserController {
     url = url.toLowerCase()
     const browser = await puppeteer.launch({
       headless: true,
-      args: [
-             '--no-sandbox',
-             '--disable-setuid-sandbox'
-             ]
+      // args: [
+      //        '--no-sandbox',
+      //        '--disable-setuid-sandbox'
+      //        ]
+      userDataDir: 'c:/Program Files (x86)/Google',
+      executablePath: 'c:/Program Files/Google/Chrome/Application/chrome.exe'
     })
     const page = await browser.newPage()
     await page.goto(url, {
@@ -45,10 +48,18 @@ class UserController {
       return link
     })
     console.log(image)
+
     await browser.close()
+    const dir = "C:/Users/Administrator/test/src/public/"
+    let files = await Promise.all(image.map(x => download.image({
+      url: x,
+      dest: `${dir}image`
+    })))
+    files = await files.map(x => x.filename.split("\\").join("/").replace(dir, "/"))
     res.status(201).json({
-      message: image,
+      message: "Get image successfully! ",
       status: true,
+      image: files
     })
     } 
     catch (e) {

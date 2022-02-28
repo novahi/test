@@ -644,6 +644,11 @@ ignore-by-default@^1.0.1:
   resolved "https://registry.yarnpkg.com/ignore-by-default/-/ignore-by-default-1.0.1.tgz#48ca6d72f6c6a3af00a9ad4ae6876be3889e2b09"
   integrity sha1-SMptcvbGo68Aqa1K5odr44ieKwk=
 
+image-downloader@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/image-downloader/-/image-downloader-4.1.0.tgz#ce54bc675e243b24c43ca951a326416d4b7bf675"
+  integrity sha512-S6snaVMg4g08sksTb0ZUQsgQmKo0sv20jJoVtOnSbO/tVC4xcG9DydjLF5ONTKIz3e3qUPnIrMJhU9G124uIfQ==
+
 import-lazy@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/import-lazy/-/import-lazy-2.1.0.tgz#05698e3d45c88e8d7e9d92cb0584e77f096f3e43"
