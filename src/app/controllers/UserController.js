@@ -11,7 +11,6 @@ class UserController {
     let { url } = req.body
     url = url.toLowerCase()
     const browser = await puppeteer.launch({
-      headless: true,
       // args: [
       //        '--no-sandbox',
       //        '--disable-setuid-sandbox'
@@ -35,20 +34,33 @@ class UserController {
       await Promise.all([page.click("button[type='submit']"), page.waitForNavigation({ waitUntil: "networkidle0"})])
     }
     await page.goto(url, { waitUntil: "networkidle0" })
-    const image = await page.evaluate(() => {
-      let link = document.querySelectorAll("img[class='FFVAD']")
-      link = [...link]
-      link = link.map(x => {
-        let url = x.getAttribute("srcset")
-        url = url.split(",")
-        url = url[url.length -1]
-        url = url.split(" ")[0]
-        return url
-      })
-      return link
+      const image = await page.evaluate(async () => {
+        let array = [];
+        const listImage = await new Promise((resolve, reject) => {
+          let image;
+          let url;
+          const autoScroll = setInterval(() => {
+            let results = array;
+            let loading = document.querySelector("svg.By4nA");
+            if (!loading) {
+              resolve(results);
+              clearInterval(autoScroll);
+            };
+            window.scrollBy(0, window.innerHeight);
+            image = Array.from(document.querySelectorAll("img.FFVAD"));
+            image.forEach(x => {
+              url = x.getAttribute("srcset");
+              if (url) {
+                url = url.split(",");
+                url = url[url.length - 1].split(" ")[0];
+                results.includes(url) ? null : results.push(url)
+              }
+            });
+          }, 200)
+});
+return listImage
     })
-    console.log(image)
-
+    console.log(image.length)
     await browser.close()
     const dir = "C:/Users/Administrator/test/src/public/"
     let files = await Promise.all(image.map(x => download.image({
