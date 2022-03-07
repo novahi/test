@@ -33,8 +33,9 @@ $(".form").addEventListener("submit", async (e) => {
       data.images.forEach(x => {
       const imgData = window.btoa(x.url)
       const image = images.file(x.filename, imgData, { base64: true })
-      const imgData = await zip.generateAsync({ type: "blob" })
-      const saveZip = await saveAs(imgData, "images")
+    })
+    const dataZip = await zip.generateAsync({ type: "blob" })
+    const saveZip = await saveAs(dataZip, "images")
     }
     let resultMessage = data.status ? "alert-success" : "alert-error"
     $("#message").classList.add(resultMessage)
