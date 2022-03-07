@@ -8,7 +8,7 @@
   <div id="message" class="alert"></div>
   <div class="image"></div>
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js" integrity="sha512-csNcFYJniKjJxRWRV1R7fvnXrycHP6qDR21mgz1ZP55xY5d+aHLfo9/FcGDQLfn2IfngbAHd8LdfsagcCqgTcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js" integrity="sha512-xQBQYt9UcgblF6aCMrwU1NkVA7HCXaSN2oq0so80KO+y68M+n64FOcqgav4igHe6D5ObBLIf68DWv+gfBowczg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
   const $ = document.querySelector.bind(document)
@@ -16,7 +16,7 @@ $(".form").addEventListener("submit", async (e) => {
   try {
     e.preventDefault()
     e.stopPropagation()
-    $("#message").textContent = "Loading...!"
+    $("#message").textContent = "Vui lòng đợi ít phút, nếu trang có nhiều ảnh sẽ lâu hơn !"
     const data = await fetch("/", {
         method: "POST",
         headers: {
@@ -27,19 +27,29 @@ $(".form").addEventListener("submit", async (e) => {
         })
       })
       .then(res => res.json())
-    
+    const zip = new JSZip()
+    const images = zip.folder("images")
+    if(data.status) {
+      data.images.forEach(x => {
+      const imgData = window.btoa(x.url)
+      const image = images.file(x.filename, imgData, { base64: true })
+      const imgData = await zip.generateAsync({ type: "blob" })
+      const saveZip = await saveAs(imgData, "images")
+    }
     let resultMessage = data.status ? "alert-success" : "alert-error"
     $("#message").classList.add(resultMessage)
     $("#message").textContent = data.message
-    data.image.forEach(x => {
+    data.results.forEach(x => {
       let img = document.createElement("img")
       img.className = "item"
-      img.src = x
+      img.src = x.url
+      img.alt = x.filename
       $(".image").appendChild(img)
     })
+    console.log(data)
   } catch (e) {
     $("#message").classList.add("alert-error")
-    $("#message").textContent = "Server Error"
+    $("#message").textContent = e.message
   }
 })
 </script>

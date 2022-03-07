@@ -11,8 +11,9 @@ class UserController {
     try {
       let { url } = req.body
       url = url.toLowerCase()
+      console.log(`get ${url}`)
       const dir = "C:/Users/Administrator/test/src/public/"
-      if(fs.existsSync(`${dir}image`)) {
+      if (fs.existsSync(`${dir}image`)) {
         fs.rmdirSync(`${dir}image`, { recursive: true })
         fs.mkdirSync(`${dir}image`)
       } else {
@@ -31,6 +32,7 @@ class UserController {
       await page.goto(url, {
         waitUntil: 'networkidle0'
       })
+      console.log(`Login IG and goto url`)
       const isLogin = await page.evaluate(() => window.location.href)
       if (isLogin.includes(linkLogin)) {
         await Promise.all([
@@ -51,10 +53,10 @@ class UserController {
       await page.goto(url, {
         waitUntil: "networkidle0"
       })
+      console.log(`start auto scroll page and get link all image`)
       const image = await page.evaluate(async () => {
         let array = [];
         const listImage = await new Promise((resolve, reject) => {
-          let image;
           let url;
           const autoScroll = setInterval(() => {
             let results = array;
@@ -64,7 +66,7 @@ class UserController {
               clearInterval(autoScroll);
             };
             window.scrollBy(0, window.innerHeight);
-            image = Array.from(document.querySelectorAll("img.FFVAD"));
+            let image = Array.from(document.querySelectorAll("img.FFVAD"));
             image.forEach(x => {
               url = x.getAttribute("srcset");
               if (url) {
@@ -73,21 +75,27 @@ class UserController {
                 results.includes(url) ? null : results.push(url)
               }
             });
-          }, 200)
+          }, 700)
         });
         return listImage
       })
       await browser.close()
+      console.log(`get success and close browser`)
       let files = await Promise.all(image.map(x => download.image({
         url: x,
         dest: `${dir}image`
       })))
-      files = await files.map(x => x.filename.split("\\").join("/").replace(dir, "/"))
+      files = await files.map(x => ({
+        url: x.filename.split("\\").join("/").replace(dir, "/"),
+        filename: x.filename.split("\\").join("/").replace(`${dir}image/`, "")
+      }))
+      const viewsImages = files.slice(0, files.length >= 25 ? 25 : files.length)
+      console.log(`edit path and send image to client`)
       res.status(201).json({
         message: "Get image successfully! ",
         status: true,
-        image: files,
-        other: ""
+        images: files,
+        results: viewsImages
       })
     } catch (e) {
       console.error(`Erorr: ${e.message}`)
