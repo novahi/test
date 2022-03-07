@@ -12,7 +12,7 @@ class UserController {
       let { url } = req.body
       url = url.toLowerCase()
       console.log(`get ${url}`)
-      const dir = "C:/Users/Administrator/test/src/public/"
+      const dir = "/app/src/public/"
       if (fs.existsSync(`${dir}image`)) {
         fs.rmdirSync(`${dir}image`, { recursive: true })
         fs.mkdirSync(`${dir}image`)
@@ -86,8 +86,8 @@ class UserController {
         dest: `${dir}image`
       })))
       files = await files.map(x => ({
-        url: x.filename.split("\\").join("/").replace(dir, "/"),
-        filename: x.filename.split("\\").join("/").replace(`${dir}image/`, "")
+        url: x.filename.replace(dir, "/"),
+        filename: x.filename.replace(`${dir}image`, "/")
       }))
       const viewsImages = files.slice(0, files.length >= 25 ? 25 : files.length)
       console.log(`edit path and send image to client`)
