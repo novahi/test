@@ -12,7 +12,7 @@ class UserController {
       let { url } = req.body
       url = url.toLowerCase()
       console.log(`get ${url}`)
-      const dir = "/app/src/public/"
+      const dir = "C:/Users/Administrator/test/src/public/"
       if (fs.existsSync(`${dir}image`)) {
         fs.rmdirSync(`${dir}image`, { recursive: true })
         fs.mkdirSync(`${dir}image`)
@@ -21,12 +21,12 @@ class UserController {
       }
       const browser = await puppeteer.launch({
         // headless: false,
-        args: [
-               '--no-sandbox',
-               '--disable-setuid-sandbox'
-               ]
-        // userDataDir: 'c:/Program Files (x86)/Google',
-        // executablePath: 'c:/Program Files/Google/Chrome/Application/chrome.exe'
+        // args: [
+        //        '--no-sandbox',
+        //        '--disable-setuid-sandbox'
+        //        ]
+        userDataDir: 'c:/Program Files (x86)/Google',
+        executablePath: 'c:/Program Files/Google/Chrome/Application/chrome.exe'
       })
       const page = await browser.newPage()
       await page.goto(url, {
@@ -86,8 +86,8 @@ class UserController {
         dest: `${dir}image`
       })))
       files = await files.map(x => ({
-        url: x.filename.replace(dir, "/"),
-        filename: x.filename.replace(`${dir}image`, "/")
+        url: x.filename.split("\\").join("/").replace(dir, "http://localhost:3000/"),
+        filename: x.filename.split("\\").join("/").replace(`${dir}image/`, "")
       }))
       const viewsImages = files.slice(0, files.length >= 25 ? 25 : files.length)
       console.log(`edit path and send image to client`)
