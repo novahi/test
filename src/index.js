@@ -30,7 +30,7 @@ app.set("views", path.join(__dirname, "resrc", "views"))
 route(app)
 
 app.listen(port, () =>
-
+    console.log(`folder: ${__dirname}`)
     console.log(`App listening at http://localhost:${port}`)
 
 )
