@@ -30,7 +30,7 @@ $(".form").addEventListener("submit", async (e) => {
     const zip = new JSZip()
     const images = zip.folder("images")
     if(data.status) {
-      data.images.forEach(x => {
+      data.images.forEach((x) => {
       const imgData = window.btoa(x.url)
       const image = images.file(x.filename, imgData, { base64: true })
     })
