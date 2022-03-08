@@ -14,20 +14,20 @@ class UserController {
       console.log(`Bật trình duyệt và mở trang ${url}`)
       const dir = __dirname.split("\\").join("/").replace("app/controllers", "public")
       if (fs.existsSync(`${dir}/image`)) {
-        console.log(`có thư mục`)
+        console.log(`tạo `)
         fs.rmdir(`${dir}/image`, { recursive: true }, (err) => {
           if(err) {
             return console.log(err)
           }
-          console.log(`tạo thành công !`)
+          fs.mkdir(`${dir}/image`, { recursive: true }, (err) => {
+            if(err) {
+              return console.log(err)
+            }
+            console.log(`tạo lại thành công`)
+          })
         })
-        fs.mkdir(`${dir}/image`, { recursive: true }, (err) => {
-          if(err) {
-            return console.log(err)
-          }
-        })
+        
       } else {
-        console.log(`không `)
         fs.mkdir(`${dir}/image`, { recursive: true }, (err) => {
           if(err) {
             return console.log(err)
