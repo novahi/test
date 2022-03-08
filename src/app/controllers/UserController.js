@@ -15,11 +15,11 @@ class UserController {
       const dir = __dirname.split("\\").join("/").replace("app/controllers", "public")
       if (fs.existsSync(`${dir}/image`)) {
         console.log(`có thư mục`)
-        fs.rmdirSync(`${dir}/image`, { recursive: true })
+        fs.rm(`${dir}/image`, { recursive: true })
         fs.mkdirSync(`${dir}/image`)
       } else {
         console.log(`không `)
-        fs.mkdirSync(`${dir}/image`)
+        fs.rm(`${dir}/image`)
       }
       const browser = await puppeteer.launch({
         // headless: false,
