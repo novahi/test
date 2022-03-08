@@ -13,15 +13,14 @@ class UserController {
       url = url.toLowerCase()
       console.log(`Bật trình duyệt và mở trang ${url}`)
       const dir = __dirname.split("\\").join("/").replace("app/controllers", "public")
+      const err = (err) => err ? console.log(`Lỗi Fs: ${err}`)
       if (fs.existsSync(`${dir}/image`)) {
         console.log(`có thư mục`)
-        fs.rmdir(`${dir}/image`, { recursive: true }, (err) => {
-          err ? console.log(`lỗi Fs.rmdir: ${err}`) : null
-        })
-        fs.mkdirSync(`${dir}/image`)
+        fs.rmdir(`${dir}/image`, { recursive: true }, err(err))
+        fs.mkdir(`${dir}/image`, { recursive: true }, err(err))
       } else {
         console.log(`không `)
-        fs.mkdirSync(`${dir}/image`)
+        fs.mkdir(`${dir}/image`, { recursive: true }, err(err))
       }
       const browser = await puppeteer.launch({
         // headless: false,
