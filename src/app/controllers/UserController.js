@@ -14,8 +14,6 @@ class UserController {
       url = url.toLowerCase()
       console.log(`Bật trình duyệt và mở trang ${url}`)
       const dir = __dirname.split("\\").join("/").replace("app/controllers", "public")
-      //const dir = "C:/Users/Administrator/test/src/public/"
-      console.log(dir)
       if (fs.existsSync(`${dir}/image`)) {
         console.log(`có thư mục`)
         fs.rmdirSync(`${dir}/image`, { recursive: true })
@@ -26,12 +24,12 @@ class UserController {
       }
       const browser = await puppeteer.launch({
         // headless: false,
-        //  args: [
-        //         '--no-sandbox',
-        //         '--disable-setuid-sandbox'
-        //         ],
-       userDataDir: 'c:/Program Files (x86)/Google',
-       executablePath: 'c:/Program Files/Google/Chrome/Application/chrome.exe'
+         args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox'
+                ]
+      //  userDataDir: 'c:/Program Files (x86)/Google',
+      //  executablePath: 'c:/Program Files/Google/Chrome/Application/chrome.exe'
       })
       const page = await browser.newPage()
       await page.goto(url, {
@@ -93,8 +91,8 @@ class UserController {
         dest: `${dir}/image`
       })))
       files = await files.map(x => ({
-        url: x.filename.split("\\").join("/").replace(dir, ""),
-        filename: x.filename.split("\\").join("/").replace(`${dir}/image/`, "")
+        url: x.filename.replace(dir, ""),
+        filename: x.filename.replace(`${dir}/image/`, "")
       }))
       const viewsImages = files.slice(0, files.length >= 25 ? 25 : files.length)
       console.log(`done !`)
