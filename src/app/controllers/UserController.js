@@ -13,7 +13,7 @@ class UserController {
       url = url.toLowerCase()
       console.log(`Bật trình duyệt và mở trang ${url}`)
       const dir = __dirname.split("\\").join("/").replace("app/controllers", "public")
-      const err = (err) => err ? console.log(`Lỗi Fs: ${err}`)
+      const err = (err) => { err ? console.log(`Lỗi Fs: ${err}`) : null }
       if (fs.existsSync(`${dir}/image`)) {
         console.log(`có thư mục`)
         fs.rmdir(`${dir}/image`, { recursive: true }, err(err))
