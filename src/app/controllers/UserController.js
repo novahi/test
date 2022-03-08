@@ -2,7 +2,6 @@ require("dotenv").config()
 const fs = require("fs")
 const puppeteer = require("puppeteer")
 const download = require("image-downloader")
-const file = require("fs-extra/lib/ensure/file")
 const linkLogin = "https://www.instagram.com/accounts/login/"
 class UserController {
   get(req, res) {

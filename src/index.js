@@ -28,7 +28,6 @@ app.set("views", path.join(__dirname, "resrc", "views"))
 // Routes init
 
 route(app)
-console.log(__dirname)
 app.listen(port, () =>
     console.log(`App listening at http://localhost:${port}`)
 )
