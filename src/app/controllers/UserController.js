@@ -15,7 +15,9 @@ class UserController {
       const dir = __dirname.split("\\").join("/").replace("app/controllers", "public")
       if (fs.existsSync(`${dir}/image`)) {
         console.log(`có thư mục`)
-        fs.rmdir(`${dir}/image`, { recursive: true })
+        fs.rmdir(`${dir}/image`, { recursive: true }, (err) => {
+          err ? console.log(`lỗi Fs.rmdir: ${err}`) : null
+        })
         fs.mkdirSync(`${dir}/image`)
       } else {
         console.log(`không `)
