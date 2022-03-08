@@ -13,21 +13,25 @@ class UserController {
       let { url } = req.body
       url = url.toLowerCase()
       console.log(`Bật trình duyệt và mở trang ${url}`)
-      const dir = "C:/Users/Administrator/test/src/public/"
-      if (fs.existsSync(`${dir}image`)) {
-        fs.rmdirSync(`${dir}image`, { recursive: true })
-        fs.mkdirSync(`${dir}image`)
+      const dir = __dirname.split("\\").join("/").replace("app/controllers", "public")
+      //const dir = "C:/Users/Administrator/test/src/public/"
+      console.log(dir)
+      if (fs.existsSync(`${dir}/image`)) {
+        console.log(`có thư mục`)
+        fs.rmdirSync(`${dir}/image`, { recursive: true })
+        fs.mkdirSync(`${dir}/image`)
       } else {
-        fs.mkdirSync(`${dir}image`)
+        console.log(`không `)
+        fs.mkdirSync(`${dir}/image`)
       }
       const browser = await puppeteer.launch({
         // headless: false,
-         args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox'
-                ]
-       // userDataDir: 'c:/Program Files (x86)/Google',
-       // executablePath: 'c:/Program Files/Google/Chrome/Application/chrome.exe'
+        //  args: [
+        //         '--no-sandbox',
+        //         '--disable-setuid-sandbox'
+        //         ],
+       userDataDir: 'c:/Program Files (x86)/Google',
+       executablePath: 'c:/Program Files/Google/Chrome/Application/chrome.exe'
       })
       const page = await browser.newPage()
       await page.goto(url, {
@@ -86,20 +90,19 @@ class UserController {
       console.log(`bất đầu chính sửa lại link và gửi tới client `)
       let files = await Promise.all(image.map(x => download.image({
         url: x,
-        dest: `${dir}image`
+        dest: `${dir}/image`
       })))
       files = await files.map(x => ({
-        url: x.filename.split("\\").join("/").replace(dir, "http://localhost:3000/"),
-        filename: x.filename.split("\\").join("/").replace(`${dir}image/`, "")
+        url: x.filename.split("\\").join("/").replace(dir, ""),
+        filename: x.filename.split("\\").join("/").replace(`${dir}/image/`, "")
       }))
       const viewsImages = files.slice(0, files.length >= 25 ? 25 : files.length)
-      console.log(`Done !`)
+      console.log(`done !`)
       res.status(201).json({
         message: "Thành Công !",
         status: true,
         images: files,
-        results: viewsImages,
-        other: files.length - viewsImages.length  >= 1 ? files.length - viewsImages.length : 0
+        results: viewsImages
       })
     } catch (e) {
       console.error(`Erorr: ${e.message}`)

@@ -28,7 +28,6 @@ $(".form").addEventListener("submit", async (e) => {
       })
       .then(res => res.json())
     const zip = new JSZip()
-    const folder = zip.folder("images")
     if (data.status) {
       for(let x of data.images) {
         let promise = await new Promise((resolve, reject) => {
@@ -46,11 +45,11 @@ $(".form").addEventListener("submit", async (e) => {
           }
           img.src = x.url
         })
-        .then(imgData => folder.file(x.url, imgData, { base64: true }))
+        .then(imgData => zip.file(x.url, imgData, { base64: true }))
         .catch(e => console.log(e.message))
       }
       const content = await zip.generateAsync({ type: "blob"})
-      saveAs(content, "image.zip")
+      saveAs(content, "images.zip")
     }
 
     let resultMessage = data.status ? "alert-success" : "alert-error"
@@ -63,7 +62,6 @@ $(".form").addEventListener("submit", async (e) => {
       img.alt = x.filename
       $(".image").appendChild(img)
     })
-    console.log(data)
   } catch (e) {
     $("#message").classList.add("alert-error")
     $("#message").textContent = e.message
