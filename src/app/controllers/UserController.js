@@ -12,7 +12,7 @@ class UserController {
     try {
       let { url } = req.body
       url = url.toLowerCase()
-      console.log(`get ${url}`)
+      console.log(`Bật trình duyệt và mở trang ${url}`)
       const dir = "C:/Users/Administrator/test/src/public/"
       if (fs.existsSync(`${dir}image`)) {
         fs.rmdirSync(`${dir}image`, { recursive: true })
@@ -33,9 +33,10 @@ class UserController {
       await page.goto(url, {
         waitUntil: 'networkidle0'
       })
-      console.log(`Login IG and goto url`)
+      console.log(`Kiểm tra xem đã đăng nhập IG chưa (nếu chưa thì đăng nhập)`)
       const isLogin = await page.evaluate(() => window.location.href)
       if (isLogin.includes(linkLogin)) {
+        console.log(`chưa đăng nhập và bất đầu đăng nhập`)
         await Promise.all([
           page.waitForSelector("input[name='username']"),
           page.waitForSelector("input[name='password']"),
@@ -54,7 +55,7 @@ class UserController {
       await page.goto(url, {
         waitUntil: "networkidle0"
       })
-      console.log(`start auto scroll page and get link all image`)
+      console.log(`Đăng nhập thành công, bắt đầu tự động cuộn trang và lấy ra tất cả link ảnh `  )
       const image = await page.evaluate(async () => {
         let array = [];
         const listImage = await new Promise((resolve, reject) => {
@@ -81,7 +82,8 @@ class UserController {
         return listImage
       })
       await browser.close()
-      console.log(`get success and close browser`)
+      console.log(`lấy  ảnh thành công và đóng trình duyệt`)
+      console.log(`bất đầu chính sửa lại link và gửi tới client `)
       let files = await Promise.all(image.map(x => download.image({
         url: x,
         dest: `${dir}image`
@@ -91,18 +93,18 @@ class UserController {
         filename: x.filename.split("\\").join("/").replace(`${dir}image/`, "")
       }))
       const viewsImages = files.slice(0, files.length >= 25 ? 25 : files.length)
-      console.log(`edit path and send image to client`)
+      console.log(`Done !`)
       res.status(201).json({
-        message: "Get image successfully! ",
+        message: "Thành Công !",
         status: true,
         images: files,
         results: viewsImages,
-        other: files.length >=1 ? files.length : 0
+        other: files.length - viewsImages.length  >= 1 ? files.length - viewsImages.length : 0
       })
     } catch (e) {
       console.error(`Erorr: ${e.message}`)
       res.status(404).json({
-        message: "co loi",
+        message: "Có lỗi !",
         status: false
       })
     }
