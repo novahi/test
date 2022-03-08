@@ -16,7 +16,7 @@ $(".form").addEventListener("submit", async (e) => {
   try {
     e.preventDefault()
     e.stopPropagation()
-    $("#message").textContent = "Vui lòng đợi ít phút, nếu trang có nhiều ảnh sẽ lâu hơn !"
+    $("#message").textContent = "đang tải, nếu số lượng ảnh trong trang nhiều thì vui lòng đợi ít phút!"
     const data = await fetch("/", {
         method: "POST",
         headers: {
@@ -28,7 +28,28 @@ $(".form").addEventListener("submit", async (e) => {
       })
       .then(res => res.json())
     const zip = new JSZip()
-    const images = zip.folder("images")
+    const folder = zip.folder("images")
+    if (data.status) {
+      data.images.forEach((x) => {
+
+        const img = new Image()
+        img.crossOrigin = "anonymous"
+        img.onload = () => {
+          let canvas = document.createElement("canvas")
+          canvas.height = img.height
+          canvas.width = img.width
+          let ctx = canvas.getContext("2d")
+          ctx.drawImage(img, 0, 0)
+          let dataUrl = canvas.toDataURL("image/jpeg")
+          let imgData = dataUrl.split(",")[1]
+          imgData ? folder.file(x.filename, imgData, { base64: true}) : null
+        }
+        img.src = x.url
+      })
+      const content =await  zip.generateAsync({ type: "blob"})
+      saveAs(content, "image.zip")
+    }
+
     let resultMessage = data.status ? "alert-success" : "alert-error"
     $("#message").classList.add(resultMessage)
     $("#message").textContent = data.message
