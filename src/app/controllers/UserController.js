@@ -71,9 +71,9 @@ class UserController {
         waitUntil: "networkidle0"
       })
       console.log(`Đăng nhập thành công, bắt đầu tự động cuộn trang và lấy ra tất cả link ảnh `  )
-      const image = await page.evaluate(async () => {
+      const imgData = await page.evaluate(async () => {
         let array = [];
-        const listImage = await new Promise((resolve, reject) => {
+        const base64 = await new Promise((resolve, reject) => {
           let url;
           const autoScroll = setInterval(() => {
             let results = array;
@@ -93,26 +93,48 @@ class UserController {
               }
             });
           }, 700)
-        });
-        return listImage
+        })
+          .then(async (listImg) => {
+            const dataUrl = await new Promise((resolve) => {
+              let results = [];
+              listImg.forEach(x => {
+                let img = new Image();
+                img.crossOrigin = "Anonymous";
+                img.onload = () => {
+                  let canvas = document.createElement("canvas");
+                  canvas.height = img.height;
+                  canvas.width = img.width;
+                  let ctx = canvas.getContext("2d");
+                  ctx.drawImage(img, 0, 0);
+                  let dataUrl = canvas.toDataURL("image/jpeg");
+                  results.includes(dataUrl) ? null :
+                    results.push(dataUrl);
+                  listImg.length == results.length ? resolve(results) : null
+                };
+                img.src = x;
+              });
+            });
+            return dataUrl
+          })
+          return base64
       })
       await browser.close()
       console.log(`lấy  ảnh thành công và đóng trình duyệt`)
       console.log(`bất đầu chính sửa lại link và gửi tới client `)
-      let files = await Promise.all(image.map(x => download.image({
-        url: x,
-        dest: `${dir}/image`
-      })))
-      files = await files.map(x => ({
-        url: x.filename.replace(dir, ""),
-        filename: x.filename.replace(`${dir}/image/`, "")
-      }))
-      const viewsImages = files.slice(0, files.length >= 25 ? 25 : files.length)
+      
+      let infoImage = await imgData(x => {
+        let newData = x.split(",")[1]
+        return {
+          imgData: newData,
+          name: `Qiz_IG_${newData.slice(0, x.length >= 0 ? 10 : x.length)}.jpg`
+        }
+      })
+      const viewsImages = infoImage.slice(0, infoImage.length >= 25 ? 25 : infoImage.length)
       console.log(`done !`)
       res.status(201).json({
         message: "Thành Công !",
         status: true,
-        images: files,
+        images: infoImage,
         results: viewsImages
       })
     } catch (e) {
