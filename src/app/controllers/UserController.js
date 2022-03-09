@@ -37,12 +37,12 @@ class UserController {
       }
       const browser = await puppeteer.launch({
         // headless: false,
-         args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox'
-                ]
-      //  userDataDir: 'c:/Program Files (x86)/Google',
-      //  executablePath: 'c:/Program Files/Google/Chrome/Application/chrome.exe'
+        // args: [
+        //         '--no-sandbox',
+        //         '--disable-setuid-sandbox'
+        //         ]
+        userDataDir: 'c:/Program Files (x86)/Google',
+        executablePath: 'c:/Program Files/Google/Chrome/Application/chrome.exe'
       })
       const page = await browser.newPage()
       await page.goto(url, {
