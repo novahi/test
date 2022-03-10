@@ -72,51 +72,71 @@ class UserController {
       })
       console.log(`Đăng nhập thành công, bắt đầu tự động cuộn trang và lấy ra tất cả link ảnh `  )
       const imgData = await page.evaluate(async () => {
-        let array = [];
-        const base64 = await new Promise((resolve, reject) => {
-          let url;
-          const autoScroll = setInterval(() => {
-            let results = array;
-            let loading = document.querySelector("svg.By4nA");
-            if (!loading) {
-              resolve(results);
-              clearInterval(autoScroll);
-            };
-            window.scrollBy(0, window.innerHeight);
-            let image = Array.from(document.querySelectorAll("img.FFVAD"));
-            image.forEach(x => {
-              url = x.getAttribute("srcset");
-              if (url) {
-                url = url.split(",");
-                url = url[url.length - 1].split(" ")[0];
-                results.includes(url) ? null : results.push(url)
-              }
-            });
-          }, 700)
+        async function loopImg(selectorAll) {
+  try {
+    let storage = [];
+    let allImg = document.querySelectorAll(selectorAll);
+    if (allImg) {
+      return await new Promise((resolve, reject) => {
+        let store = storage;
+        const interval = setInterval(() => {
+          let loading = document.querySelector("svg.By4nA");
+          if(!loading) {
+          resolve(store);
+          clearInterval(interval)
+          };
+          let loop = [...document.querySelectorAll(selectorAll)];
+          loop.forEach(x => {
+            let url = x.getAttribute("srcset");
+            if(url) {
+              url = url.split(",");
+              url = url[url.length - 1].split(" ")[0];
+              store.includes(url) ? null : store.push(url);
+            }
+          });
+          window.scrollBy(0, window.innerHeight)
         })
-          .then(async (listImg) => {
-            const dataUrl = await new Promise((resolve) => {
-              let results = [];
-              listImg.forEach(x => {
-                let img = new Image();
-                img.crossOrigin = "Anonymous";
-                img.onload = () => {
-                  let canvas = document.createElement("canvas");
-                  canvas.height = img.height;
-                  canvas.width = img.width;
-                  let ctx = canvas.getContext("2d");
-                  ctx.drawImage(img, 0, 0);
-                  let dataUrl = canvas.toDataURL("image/jpeg");
-                  results.includes(dataUrl) ? null :
-                    results.push(dataUrl);
-                  listImg.length == results.length ? resolve(results) : null
-                };
-                img.src = x;
-              });
-            });
-            return dataUrl
-          })
-          return base64
+      })
+    }
+  } catch (e) {
+    console.log(`Error loopImg: ${e.message}`)
+  }
+};
+async function getBase64(listImg) {
+  try {
+    let imgs = listImg;
+    let storage = [];
+    if(imgs) {
+      return await new Promise((resolve, reject) => {
+        let store = storage;
+        imgs.forEach(x => {
+          let img = new Image();
+          img.crossOrigin = "Anonymous";
+          img.onload = () => {
+            let canvas = document.createElement("canvas");
+            canvas.height = img.height;
+            canvas.width = img.width;
+            let ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            let dataUrl = canvas.toDataURL("image/jpeg");
+            store.includes(dataUrl) ? null : store.push(dataUrl);
+            store.length == imgs.length ? resolve(store) : null
+          };
+          img.src = x
+        })
+      })
+      .then(data => {
+        console.log(`Convert success ${data.length} image to base64`);
+        return data
+      })
+    }
+  } catch (e) {
+    console.log(`Error base64: ${e.message}`)
+  }
+}
+  const allImage = await loopImg("img.FFVAD");
+  const base64 = await getBase64(allImage);
+  return base64
       })
       await browser.close()
       console.log(`lấy  ảnh thành công và đóng trình duyệt`)
